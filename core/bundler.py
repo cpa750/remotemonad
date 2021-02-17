@@ -7,12 +7,14 @@ class Bundler:
     def __init__(self):
         self.command_queue = list()
 
-    def queue(self, func: Callable[..., T], args: tuple = (), kwargs: dict = None):
+    def queue(self, func: Callable[..., None],
+              args: tuple = (), kwargs: dict = None) -> None:
         if kwargs is None:
             kwargs = {}
         self.command_queue.append((func, args, kwargs))
 
-    def send_procedure(self, func: Callable[..., T], args: tuple = (), kwargs: dict = None):
+    def send_procedure(self, func: Callable[..., T],
+                       args: tuple = (), kwargs: dict = None) -> T:
         if kwargs is None:
             kwargs = {}
         self.send_queue()
