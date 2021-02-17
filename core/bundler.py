@@ -1,13 +1,11 @@
-import rpyc
 from typing import TypeVar, Callable
 
 T = TypeVar('T')
 
 
-class Remote:
-    def __init__(self, address: str, port: int):
+class Bundler:
+    def __init__(self):
         self.command_queue = []
-        self.conn = rpyc.connect(address, port)
 
     def queue(self, func: Callable[..., T], args: tuple, kwargs: dict):
         self.command_queue.append((func, args, kwargs))
