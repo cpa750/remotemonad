@@ -17,10 +17,10 @@ class Bundler:
                        args: tuple = (), kwargs: dict = None) -> T:
         if kwargs is None:
             kwargs = {}
-        self.send_queue()
+        self.__send_queue()
         return func(*args, **kwargs)
 
-    def send_queue(self):
+    def __send_queue(self):
         for func in self.command_queue:
             # equivalent to command(*args, **kwargs)
             func[0](*func[1], **func[2])
