@@ -26,20 +26,12 @@ class Bundler:
             func[0](*func[1], **func[2])
         self.command_queue.clear()
 
-
-def command(bundler):
-    # This wonderful bit of code is necessary for a decorator with params
-    def decorator(func):
+    def command(self, func):
         def inner(*args, **kwargs):
-            bundler.queue(func, args, kwargs)
+            self.queue(func, args, kwargs)
         return inner
-    return decorator
 
-
-def procedure(bundler):
-    # Same here
-    def decorator(func):
+    def procedure(self, func):
         def inner(*args, **kwargs):
-            return bundler.send_procedure(func, args, kwargs)
+            return self.send_procedure(func, args, kwargs)
         return inner
-    return decorator

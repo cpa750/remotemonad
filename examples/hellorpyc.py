@@ -5,12 +5,12 @@ bundler = Bundler()
 conn = rpyc.connect("localhost", 18861)
 
 
-@command(bundler)
+@bundler.command
 def say_hello(name: str):
     conn.root.say_hello(name)
 
 
-@procedure(bundler)
+@bundler.procedure
 def multiply(a: int, b: int) -> int:
     return conn.root.multiply(a, b)
 

@@ -3,12 +3,12 @@ from core.bundler import *
 bundler = Bundler()
 
 
-@command(bundler)
+@bundler.command
 def say_hello(name: str):
     print("Hello, {}!".format(name))
 
 
-@procedure(bundler)
+@bundler.procedure
 def multiply(a: int, b: int) -> int:
     return a * b
 
