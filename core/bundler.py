@@ -7,6 +7,9 @@ class Bundler:
     def __init__(self):
         self.command_queue = list()
 
+    def __del__(self):
+        self.flush()
+
     def queue(self, func: Callable[..., None],
               args: tuple = (), kwargs: dict = None) -> None:
         if kwargs is None:
@@ -17,10 +20,10 @@ class Bundler:
                        args: tuple = (), kwargs: dict = None) -> T:
         if kwargs is None:
             kwargs = {}
-        self.__send_queue()
+        self.flush()
         return func(*args, **kwargs)
 
-    def __send_queue(self):
+    def flush(self):
         for func in self.command_queue:
             # equivalent to command(*args, **kwargs)
             func[0](*func[1], **func[2])
