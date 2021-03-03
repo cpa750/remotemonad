@@ -1,7 +1,7 @@
-from core.bundler import *
+from core.strongbundler import *
 import rpyc
 
-bundler = Bundler()
+bundler = StrongBundler()
 conn = rpyc.connect("localhost", 18861)
 
 

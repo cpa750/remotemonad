@@ -1,6 +1,6 @@
-from core.bundler import *
+from core.strongbundler import *
 
-bundler = Bundler()
+bundler = StrongBundler()
 
 
 @bundler.command

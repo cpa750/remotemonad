@@ -3,7 +3,7 @@ from typing import TypeVar, Callable
 T = TypeVar('T')
 
 
-class Bundler:
+class StrongBundler:
     def __init__(self):
         self.command_queue = list()
 
