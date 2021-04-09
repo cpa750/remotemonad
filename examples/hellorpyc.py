@@ -1,23 +1,17 @@
+import Pyro5.api
+
+from core.multicaller import *
 from core.strongbundler import *
-import rpyc
 
-bundler = StrongBundler()
-conn = rpyc.connect("localhost", 18861)
+nameserver = Pyro5.api.locate_ns()
+uri = nameserver.lookup("sayhello")
+proxy = Pyro5.api.Proxy(uri)
 
+multicaller = MultiCaller(proxy)
+bundler = StrongBundler(multicaller)
 
-@bundler.command
-def say_hello(name: str):
-    conn.root.say_hello(name)
+bundler.register_command(multicaller.say_hello)
 
-
-@bundler.procedure
-def multiply(a: int, b: int) -> int:
-    return conn.root.multiply(a, b)
-
-
-print("Sending command...")
-say_hello("Cian")
-print("Command sent, sending procedure...")
-c = multiply(2, 2)
-print("Procedure result received: {}".format(c))
-say_hello("Joe")
+bundler.queue(multicaller.say_hello, "Cian")
+print(bundler.queue(multicaller.multiply, 2, 2))
+bundler.queue(multicaller.say_hello, "Joe")

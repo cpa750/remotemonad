@@ -1,40 +1,30 @@
 from typing import TypeVar, Callable
 
+from core.multicaller import BatchMethod
+
 T = TypeVar('T')
 
 
 class StrongBundler:
-    def __init__(self):
-        self.command_queue = list()
+    def __init__(self, multicaller):
+        self.multicaller = multicaller
+        self.commands = list()
 
     def __del__(self):
-        self.flush()
+        if self.multicaller.has_queued_calls():
+            self.send()
 
-    def queue(self, func: Callable[..., None],
-              args: tuple = (), kwargs: dict = None) -> None:
-        if kwargs is None:
-            kwargs = {}
-        self.command_queue.append((func, args, kwargs))
+    def queue(self, func: BatchMethod, *args, **kwargs):
+        self.multicaller.queue(func, args, kwargs)
+        if func.get_name() not in self.commands:
+            return self.send()
+        else:
+            return None
 
-    def send_procedure(self, func: Callable[..., T],
-                       args: tuple = (), kwargs: dict = None) -> T:
-        if kwargs is None:
-            kwargs = {}
-        self.flush()
-        return func(*args, **kwargs)
+    def register_command(self, func: BatchMethod):
+        self.commands.append(func.get_name())
 
-    def flush(self):
-        for func in self.command_queue:
-            # equivalent to command(*args, **kwargs)
-            func[0](*func[1], **func[2])
-        self.command_queue.clear()
+    def send(self):
+        *_, last = self.multicaller()
+        return last
 
-    def command(self, func):
-        def inner(*args, **kwargs):
-            self.queue(func, args, kwargs)
-        return inner
-
-    def procedure(self, func):
-        def inner(*args, **kwargs):
-            return self.send_procedure(func, args, kwargs)
-        return inner
